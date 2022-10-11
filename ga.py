@@ -1,18 +1,27 @@
 import sys
-
 import numpy as np
 
 
-def cal_pop_fitness(equation_inputs, pop):
+def cal_pop_fitness(equation_inputs, points, max_weight, new_population):
     # Cálculo do ‘fitness’ de cada solução na população atual
     # A função ‘fitness’ calcula a soma dos produtos entre cada
     # entrada e seu peso correspondente
-    return np.sum(pop * equation_inputs, axis=1)
+    fitness = np.empty(new_population.shape[0])
+    for i in range(new_population.shape[0]):
+        item_points = np.sum(new_population[i] * points)
+        item_weight = np.sum(new_population[i] * equation_inputs)
+
+        if item_weight <= max_weight:
+            fitness[i] = item_points
+        else:
+            fitness[i] = -9999999
+    return fitness.astype(int)
 
 
 def select_mating_pool(pop, fitness, num_parents):
     # Selecionar os melhores indivíduos na geração atual
     # para seren pais para cruzamento
+    fitness = list(fitness)
     parents = np.empty((num_parents, pop.shape[1]))
 
     for parent_num in range(num_parents):
@@ -52,7 +61,5 @@ def mutation(offspring_crossover, mutation_rate=0.3):
         if np.random.random() < mutation_rate:
             # O valor aleatório a ser adicionado
             random_idx = np.random.randint(0, offspring_crossover.shape[1])
-            random_value = np.random.uniform(-1.0, 1.0, 1)
-            offspring_crossover[idx, random_idx] = offspring_crossover[idx, random_idx] + random_value
-
+            offspring_crossover[idx, random_idx] = abs(offspring_crossover[idx, random_idx]-1)
     return offspring_crossover

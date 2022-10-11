@@ -1,20 +1,23 @@
 import numpy as np
 import ga
 
-
 def main():
     # entradas da equação
-    equation_inputs = [4, -2, 3.5, 5, -11, -4.7]
+    equation_inputs = [15, 3, 2, 5, 9, 20]
+    points =  [15, 10, 10, 5, 8, 17]
+    max_weight = 30
     # número de pesos a otimizar
     num_weights = 6
 
-    sol_per_pop = 8
+    sol_per_pop = 10
 
     # população tem sol_per_pop cromossomos com num_weights gens
     pop_size = (sol_per_pop, num_weights)
 
     # População inicial
-    new_population = np.random.uniform(low=-4.0, high=4.0, size=pop_size)
+    new_population = np.random.randint(low=0, high=2, size=pop_size, dtype=np.int64)
+    print("População aleatória: ")
+    print(new_population)
 
     # Algoritmo genético
     num_generations = 100
@@ -24,7 +27,7 @@ def main():
         print(f"Geração: {generation}")
 
         # medir o ‘fitness’ de cada cromossomo na população
-        fitness = ga.cal_pop_fitness(equation_inputs, new_population)
+        fitness = ga.cal_pop_fitness(equation_inputs, points, max_weight, new_population)
 
         print("Valores de fitness:")
         print(fitness)
@@ -54,7 +57,7 @@ def main():
         best_result = np.max(np.sum(new_population*equation_inputs, axis=1))
         print(f"Melhor resultado depois da geração {generation}: {best_result}")
 
-    fitness = ga.cal_pop_fitness(equation_inputs, new_population)
+    fitness = ga.cal_pop_fitness(equation_inputs, points, max_weight, new_population)
     best_match_idx = np.where(fitness == np.max(fitness))
 
     print("Melhor solução: ", new_population[best_match_idx, :])
